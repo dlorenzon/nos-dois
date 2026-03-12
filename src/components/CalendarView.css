@@ -1,0 +1,225 @@
+/* src/components/CalendarView.css */
+.calendar-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--color-surface);
+  padding: 1rem;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+}
+
+.calendar-header h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  text-transform: capitalize;
+  margin: 0;
+  color: var(--color-text);
+}
+
+.nav-btn {
+  padding: 0.5rem;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-light);
+}
+
+.nav-btn:hover {
+  background-color: var(--color-background);
+  color: var(--color-text);
+}
+
+.days-row {
+  display: flex;
+  width: 100%;
+  padding: 0.5rem 0;
+  background-color: var(--color-surface);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+}
+
+.col {
+  flex-grow: 1;
+  flex-basis: 0;
+  max-width: 100%;
+}
+
+.col-center {
+  justify-content: center;
+  text-align: center;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-text-light);
+}
+
+.calendar-body {
+  background-color: var(--color-surface);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+}
+
+.row {
+  display: flex;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.row:last-child {
+  border-bottom: none;
+}
+
+.cell {
+  position: relative;
+  height: 3.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-right: 1px solid var(--color-border);
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+@media (min-width: 640px) {
+  .cell {
+    height: 4.5rem;
+  }
+}
+
+.cell:last-child {
+  border-right: none;
+}
+
+.cell:hover {
+  background-color: var(--color-background);
+}
+
+.cell.disabled {
+  color: var(--color-border);
+  pointer-events: none;
+}
+
+.cell.selected {
+  background-color: var(--color-primary-light);
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+.number {
+  z-index: 1;
+}
+
+.event-dot {
+  position: absolute;
+  bottom: 0.35rem;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: var(--color-primary);
+}
+
+@media (min-width: 640px) {
+  .event-dot {
+    bottom: 0.5rem;
+  }
+}
+
+/* Events Panel */
+.events-panel {
+  background-color: var(--color-surface);
+  border-radius: var(--radius-md);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--color-border);
+  margin-top: 0.5rem;
+}
+
+.events-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: 1rem;
+  margin-bottom: 1rem;
+}
+
+.events-header h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0;
+  color: var(--color-text);
+}
+
+.add-event-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  background-color: var(--color-primary-light);
+  color: var(--color-primary);
+  font-weight: 600;
+  padding: 0.5rem 0.75rem;
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+}
+
+.add-event-btn:hover {
+  background-color: var(--color-primary);
+  color: white;
+}
+
+.no-events {
+  font-size: 0.875rem;
+  color: var(--color-text-light);
+  text-align: center;
+  padding: 1rem 0;
+  margin: 0;
+}
+
+.events-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.event-card {
+  padding: 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  border-left: 4px solid var(--color-primary);
+  background-color: var(--color-background);
+}
+
+.event-creator {
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  background-color: rgba(0,0,0,0.05);
+  padding: 0.15rem 0.4rem;
+  border-radius: var(--radius-full);
+  color: var(--color-text-light);
+  display: inline-block;
+  margin-bottom: 0.25rem;
+}
+
+.event-card h4 {
+  margin: 0 0 0.25rem 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.event-card p {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--color-text-light);
+  word-break: break-word;
+}

@@ -1,0 +1,169 @@
+/* src/components/ShoppingList.css */
+.shopping-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.add-item-form {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.add-item-input {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-full);
+  background-color: var(--color-surface);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid transparent;
+}
+
+.add-item-input:focus {
+  border-color: var(--color-primary);
+  outline: none;
+}
+
+.add-item-btn {
+  background-color: var(--color-primary);
+  color: white;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: var(--shadow-sm);
+  transition: background-color 0.2s, transform 0.2s;
+}
+
+.add-item-btn:disabled {
+  background-color: var(--color-border);
+  color: var(--color-text-light);
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.add-item-btn:not(:disabled):hover {
+  background-color: var(--color-primary-hover);
+  transform: scale(1.05);
+}
+
+.add-item-btn:not(:disabled):active {
+  transform: scale(0.95);
+}
+
+.shopping-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.shopping-item {
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+  background-color: var(--color-surface);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  gap: 1rem;
+  transition: opacity 0.3s, background-color 0.3s;
+}
+
+.shopping-item.completed {
+  opacity: 0.6;
+  background-color: transparent;
+  border: 1px dashed var(--color-border);
+  box-shadow: none;
+}
+
+.item-name {
+  flex: 1;
+  font-size: 1rem;
+  color: var(--color-text);
+  transition: color 0.3s;
+}
+
+.shopping-item.completed .item-name {
+  text-decoration: line-through;
+  color: var(--color-text-light);
+}
+
+.delete-item-btn {
+  color: var(--color-text-light);
+  padding: 0.25rem;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.delete-item-btn:hover {
+  background-color: var(--color-error);
+  color: white;
+}
+
+/* Custom Checkbox */
+.checkbox-container {
+  display: block;
+  position: relative;
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.checkbox-container input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+.checkmark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 24px;
+  width: 24px;
+  background-color: transparent;
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  transition: all 0.2s;
+}
+
+.checkbox-container:hover input ~ .checkmark {
+  border-color: var(--color-primary-hover);
+}
+
+.checkbox-container input:checked ~ .checkmark {
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+.checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+.checkbox-container input:checked ~ .checkmark:after {
+  display: block;
+}
+
+.checkbox-container .checkmark:after {
+  left: 7px;
+  top: 3px;
+  width: 5px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  -webkit-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  transform: rotate(45deg);
+}
