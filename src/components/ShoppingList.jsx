@@ -7,6 +7,13 @@ export default function ShoppingList() {
   const [items, setItems] = useState([]);
   const [inputValue, setInputValue] = useState('');
   const [loading, setLoading] = useState(true);
+  const [activeCategory, setActiveCategory] = useState('brusque');
+
+  const categories = [
+    { id: 'brusque', label: 'Brusque' },
+    { id: 'pomerode', label: 'Pomerode' },
+    { id: 'balneario', label: 'Balneário' }
+  ];
 
   useEffect(() => {
     fetchItems();
@@ -51,7 +58,11 @@ export default function ShoppingList() {
 
     try {
       const { error } = await supabase.from('shopping_items').insert([
-        { name: inputValue.trim(), is_completed: false }
+        { 
+          name: inputValue.trim(), 
+          is_completed: false,
+          category: activeCategory 
+        }
       ]);
       
       if (error) throw error;
@@ -88,8 +99,15 @@ export default function ShoppingList() {
     }
   };
 
+  // Filter items by active category
+  // If item doesn't have a category, treat it as 'brusque' (default)
+  const filteredItems = items.filter(item => {
+    const itemCategory = item.category || 'brusque';
+    return itemCategory === activeCategory;
+  });
+
   // Sort: pending first, then completed. Then sort by created_at descending
-  const sortedItems = [...items].sort((a, b) => {
+  const sortedItems = [...filteredItems].sort((a, b) => {
     if (a.is_completed === b.is_completed) {
        // Reverse order for newer items
        const dateA = new Date(a.created_at).getTime();
@@ -103,10 +121,22 @@ export default function ShoppingList() {
 
   return (
     <div className="shopping-container">
+      <div className="category-selector">
+        {categories.map(cat => (
+          <button
+            key={cat.id}
+            className={`category-btn ${activeCategory === cat.id ? 'active' : ''}`}
+            onClick={() => setActiveCategory(cat.id)}
+          >
+            {cat.label}
+          </button>
+        ))}
+      </div>
+
       <form onSubmit={handleAddItem} className="add-item-form">
         <input 
           type="text"
-          placeholder="Adicionar item... (pressione Enter)"
+          placeholder={`Adicionar em ${categories.find(c => c.id === activeCategory)?.label}...`}
           value={inputValue}
           onChange={e => setInputValue(e.target.value)}
           className="add-item-input"
@@ -119,7 +149,7 @@ export default function ShoppingList() {
       <div className="shopping-list">
         {sortedItems.length === 0 ? (
           <div className="empty-state">
-            <p>Lista vazia. Tudo em ordem por aqui!</p>
+            <p>Lista vazia para {categories.find(c => c.id === activeCategory)?.label}.</p>
           </div>
         ) : (
           sortedItems.map(item => (

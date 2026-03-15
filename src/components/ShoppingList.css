@@ -1,8 +1,37 @@
-/* src/components/ShoppingList.css */
 .shopping-container {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+}
+
+.category-selector {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.25rem;
+  background-color: var(--color-background);
+  border-radius: var(--radius-full);
+  border: 1px solid var(--color-border);
+  align-self: flex-start;
+}
+
+.category-btn {
+  padding: 0.5rem 1.25rem;
+  border-radius: var(--radius-full);
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-text-light);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.category-btn:hover {
+  color: var(--color-text);
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.category-btn.active {
+  background-color: var(--color-surface);
+  color: var(--color-primary);
+  box-shadow: var(--shadow-sm);
 }
 
 .add-item-form {
