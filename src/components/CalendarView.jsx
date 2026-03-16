@@ -23,7 +23,10 @@ export default function CalendarView() {
       .channel('calendar_changes')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'calendar_events' }, (payload) => {
         if (payload.eventType === 'INSERT') {
-          setEvents((prev) => [...prev, payload.new]);
+          setEvents((prev) => {
+            if (prev.some(ev => ev.id === payload.new.id)) return prev;
+            return [...prev, payload.new];
+          });
         } else if (payload.eventType === 'DELETE') {
           setEvents((prev) => prev.filter(ev => ev.id !== payload.old.id));
         } else if (payload.eventType === 'UPDATE') {
@@ -61,16 +64,26 @@ export default function CalendarView() {
     if (!formData.title || !formData.creator_name) return;
 
     try {
-      const { error } = await supabase.from('calendar_events').insert([
-        {
-          date: selectedDate.toISOString(),
-          title: formData.title,
-          description: formData.description,
-          creator_name: formData.creator_name
-        }
-      ]);
+      const { data, error } = await supabase
+        .from('calendar_events')
+        .insert([
+          {
+            date: selectedDate.toISOString(),
+            title: formData.title,
+            description: formData.description,
+            creator_name: formData.creator_name
+          }
+        ])
+        .select();
       
       if (error) throw error;
+
+      if (data && data.length > 0) {
+        setEvents((prev) => {
+          if (prev.some(ev => ev.id === data[0].id)) return prev;
+          return [...prev, data[0]];
+        });
+      }
 
       setFormData({ title: '', description: '', creator_name: '' });
       setIsModalOpen(false);

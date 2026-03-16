@@ -17,7 +17,10 @@ export default function ObjectivesBoard() {
       .channel('objectives_changes')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'objectives' }, (payload) => {
         if (payload.eventType === 'INSERT') {
-          setObjectives((prev) => [payload.new, ...prev]);
+          setObjectives((prev) => {
+            if (prev.some(obj => obj.id === payload.new.id)) return prev;
+            return [payload.new, ...prev];
+          });
         } else if (payload.eventType === 'DELETE') {
           setObjectives((prev) => prev.filter(obj => obj.id !== payload.old.id));
         } else if (payload.eventType === 'UPDATE') {
@@ -66,15 +69,25 @@ export default function ObjectivesBoard() {
     if (!formData.name || !formData.title) return;
 
     try {
-      const { error } = await supabase.from('objectives').insert([
-        {
-          creator_name: formData.name,
-          title: formData.title,
-          description: formData.description
-        }
-      ]);
+      const { data, error } = await supabase
+        .from('objectives')
+        .insert([
+          {
+            creator_name: formData.name,
+            title: formData.title,
+            description: formData.description
+          }
+        ])
+        .select();
       
       if (error) throw error;
+
+      if (data && data.length > 0) {
+        setObjectives((prev) => {
+          if (prev.some(obj => obj.id === data[0].id)) return prev;
+          return [data[0], ...prev];
+        });
+      }
 
       setFormData({ name: '', title: '', description: '' });
       setIsModalOpen(false);

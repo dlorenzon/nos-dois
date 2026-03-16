@@ -22,7 +22,11 @@ export default function ShoppingList() {
       .channel('shopping_changes')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'shopping_items' }, (payload) => {
         if (payload.eventType === 'INSERT') {
-          setItems((prev) => [payload.new, ...prev]);
+          setItems((prev) => {
+            // Evita duplicatas se já adicionamos manualmente no handleAddItem
+            if (prev.some(item => item.id === payload.new.id)) return prev;
+            return [payload.new, ...prev];
+          });
         } else if (payload.eventType === 'DELETE') {
           setItems((prev) => prev.filter(item => item.id !== payload.old.id));
         } else if (payload.eventType === 'UPDATE') {
@@ -54,21 +58,38 @@ export default function ShoppingList() {
 
   const handleAddItem = async (e) => {
     e.preventDefault();
-    if (!inputValue.trim()) return;
+    const name = inputValue.trim();
+    if (!name) return;
+
+    // Otimismo: limpamos o input logo
+    setInputValue('');
 
     try {
-      const { error } = await supabase.from('shopping_items').insert([
-        { 
-          name: inputValue.trim(), 
-          is_completed: false,
-          category: activeCategory 
-        }
-      ]);
+      const { data, error } = await supabase
+        .from('shopping_items')
+        .insert([
+          { 
+            name, 
+            is_completed: false,
+            category: activeCategory 
+          }
+        ])
+        .select(); // Retorna o item inserido
       
       if (error) throw error;
-      setInputValue('');
+      
+      // Adicionamos manualmente para garantir que apareça mesmo se o realtime demorar
+      if (data && data.length > 0) {
+        const newItem = data[0];
+        setItems((prev) => {
+          if (prev.some(item => item.id === newItem.id)) return prev;
+          return [newItem, ...prev];
+        });
+      }
     } catch (error) {
       console.error('Erro ao adicionar item:', error.message);
+      // Opcional: restaurar o input em caso de erro? 
+      // setInputValue(name); 
     }
   };
 
@@ -109,9 +130,9 @@ export default function ShoppingList() {
   // Sort: pending first, then completed. Then sort by created_at descending
   const sortedItems = [...filteredItems].sort((a, b) => {
     if (a.is_completed === b.is_completed) {
-       // Reverse order for newer items
-       const dateA = new Date(a.created_at).getTime();
-       const dateB = new Date(b.created_at).getTime();
+       // Se o item é novo e ainda não tem data (muito raro agora com o .select()), joga pra cima
+       const dateA = a.created_at ? new Date(a.created_at).getTime() : Date.now();
+       const dateB = b.created_at ? new Date(b.created_at).getTime() : Date.now();
        return dateB - dateA;
     }
     return a.is_completed ? 1 : -1;
