@@ -74,12 +74,6 @@ function App() {
         
         {activeTab === 'calendar' && (
           <div className="fade-in">
-            <h2 style={{ marginBottom: '0.25rem', fontSize: '1.5rem', fontWeight: '600', color: 'var(--color-text)' }}>
-              Nosso Calendário
-            </h2>
-            <p style={{ color: 'var(--color-text-light)', marginBottom: '1.5rem', fontSize: '0.9rem' }}>
-              Momentos especiais e compromissos.
-            </p>
             <CalendarView />
           </div>
         )}
