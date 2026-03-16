@@ -24,7 +24,7 @@ export default function CalendarView() {
       .on('postgres_changes', { event: '*', schema: 'public', table: 'calendar_events' }, (payload) => {
         if (payload.eventType === 'INSERT') {
           setEvents((prev) => {
-            if (prev.some(ev => ev.id === payload.new.id)) return prev;
+            if (prev.some(ev => ev.id == payload.new.id)) return prev;
             return [...prev, payload.new];
           });
         } else if (payload.eventType === 'DELETE') {
@@ -80,15 +80,18 @@ export default function CalendarView() {
 
       if (data && data.length > 0) {
         setEvents((prev) => {
-          if (prev.some(ev => ev.id === data[0].id)) return prev;
+          if (prev.some(ev => ev.id == data[0].id)) return prev;
           return [...prev, data[0]];
         });
+      } else {
+        fetchEvents();
       }
 
       setFormData({ title: '', description: '', creator_name: '' });
       setIsModalOpen(false);
     } catch (error) {
       console.error('Erro ao adicionar evento:', error.message);
+      alert('Erro ao adicionar evento: ' + error.message);
     }
   };
 

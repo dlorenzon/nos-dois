@@ -18,7 +18,7 @@ export default function ObjectivesBoard() {
       .on('postgres_changes', { event: '*', schema: 'public', table: 'objectives' }, (payload) => {
         if (payload.eventType === 'INSERT') {
           setObjectives((prev) => {
-            if (prev.some(obj => obj.id === payload.new.id)) return prev;
+            if (prev.some(obj => obj.id == payload.new.id)) return prev;
             return [payload.new, ...prev];
           });
         } else if (payload.eventType === 'DELETE') {
@@ -84,16 +84,18 @@ export default function ObjectivesBoard() {
 
       if (data && data.length > 0) {
         setObjectives((prev) => {
-          if (prev.some(obj => obj.id === data[0].id)) return prev;
+          if (prev.some(obj => obj.id == data[0].id)) return prev;
           return [data[0], ...prev];
         });
+      } else {
+        fetchObjectives();
       }
 
       setFormData({ name: '', title: '', description: '' });
       setIsModalOpen(false);
     } catch (error) {
       console.error('Erro ao salvar objetivo:', error.message);
-      alert('Erro ao salvar o objetivo. Verifique console.');
+      alert('Erro ao salvar o objetivo: ' + error.message);
     }
   };
 

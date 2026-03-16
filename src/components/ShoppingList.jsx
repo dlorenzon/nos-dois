@@ -24,7 +24,7 @@ export default function ShoppingList() {
         if (payload.eventType === 'INSERT') {
           setItems((prev) => {
             // Evita duplicatas se já adicionamos manualmente no handleAddItem
-            if (prev.some(item => item.id === payload.new.id)) return prev;
+            if (prev.some(item => item.id == payload.new.id)) return prev;
             return [payload.new, ...prev];
           });
         } else if (payload.eventType === 'DELETE') {
@@ -61,9 +61,6 @@ export default function ShoppingList() {
     const name = inputValue.trim();
     if (!name) return;
 
-    // Otimismo: limpamos o input logo
-    setInputValue('');
-
     try {
       const { data, error } = await supabase
         .from('shopping_items')
@@ -74,22 +71,26 @@ export default function ShoppingList() {
             category: activeCategory 
           }
         ])
-        .select(); // Retorna o item inserido
+        .select();
       
       if (error) throw error;
       
-      // Adicionamos manualmente para garantir que apareça mesmo se o realtime demorar
+      setInputValue(''); // Limpa só se deu certo
+      
       if (data && data.length > 0) {
         const newItem = data[0];
         setItems((prev) => {
-          if (prev.some(item => item.id === newItem.id)) return prev;
+          // Usa == para comparar string com número se necessário
+          if (prev.some(item => item.id == newItem.id)) return prev;
           return [newItem, ...prev];
         });
+      } else {
+        // Fallback: se o select não retornou nada, força um refresh
+        fetchItems();
       }
     } catch (error) {
       console.error('Erro ao adicionar item:', error.message);
-      // Opcional: restaurar o input em caso de erro? 
-      // setInputValue(name); 
+      alert('Não foi possível adicionar o item: ' + error.message);
     }
   };
 
